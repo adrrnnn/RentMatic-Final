@@ -358,31 +358,13 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
 
   if (!isOpen) return null;
 
-  const getModalMaxWidth = () => {
-    if (!windowWidth) return '90vw';
-    // Mobile first: < 768px
-    if (windowWidth < 768) return `calc(100vw - 32px)`;
-    // Tablet: 768-1024px
-    if (windowWidth < 1024) return `90vw`;
-    // Small Desktop: 1024-1440px
-    if (windowWidth < 1440) return `min(85vw, 900px)`;
-    // Large Desktop: 1440-1920px
-    if (windowWidth < 1920) return `min(80vw, 1000px)`;
-    // Ultra-wide: 1920px+
-    return `min(75vw, 1200px)`;
-  };
-
-  useEffect(() => {
-    console.log('Modal dimensions:', { windowWidth, windowHeight, modalMaxWidth: getModalMaxWidth() });
-  }, [windowWidth, windowHeight]);
-
   const modalMaxHeight = windowHeight ? Math.min(windowHeight - 48, 850) : undefined;
   const contentMaxHeight = modalMaxHeight ? Math.max(0, modalMaxHeight - 240) : undefined;
-  const modalMaxWidth = getModalMaxWidth();
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-center overflow-y-auto px-3 py-6" style={{ minHeight: windowHeight || undefined }}>
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white w-full rounded-2xl shadow-2xl overflow-hidden flex flex-col" style={{ maxWidth: modalMaxWidth, maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined }}>
+    <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-center overflow-y-auto px-3 py-6">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col w-screen max-w-[calc(100vw-24px)] sm:max-w-[calc(100vw-24px)] md:max-w-[calc(95vw-24px)] lg:max-w-[min(85vw,1100px)] xl:max-w-[min(80vw,1200px)] 2xl:max-w-[min(75vw,1400px)]" style={{ maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined }}>
+
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 flex-shrink-0 sticky top-0 z-10 bg-white">
           <div>
