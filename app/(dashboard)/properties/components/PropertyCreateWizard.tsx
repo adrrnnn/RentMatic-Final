@@ -178,7 +178,7 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
   const contentMaxHeight = modalMaxHeight ? Math.max(300, modalMaxHeight - 200) : undefined;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-center overflow-y-auto px-3 py-6" style={{ minHeight: windowHeight || undefined }}>
+    <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-start sm:justify-center overflow-y-auto px-3 py-6" style={{ minHeight: windowHeight || undefined }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -186,7 +186,7 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
         style={{ maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined }}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
+        <div className="flex items-center justify-between p-6 border-b flex-shrink-0 sticky top-0 z-10 bg-white">
           <div>
             <h2 className="text-xl font-semibold">Create Property</h2>
             <p className="text-sm text-gray-500">Step {step} of 5</p>
@@ -384,7 +384,7 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t bg-gray-50 flex-shrink-0">
+        <div className="flex items-center justify-between p-6 border-t bg-gray-50 flex-shrink-0 sticky bottom-0 z-10">
           <Button variant="outline" onClick={closeAndReset}>
             Cancel
           </Button>
