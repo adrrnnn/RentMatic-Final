@@ -20,8 +20,15 @@ interface PropertyCreateWizardProps {
 }
 
 export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCreateWizardProps) {
-  const [windowHeight, setWindowHeight] = useState<number>(0);
-  const [windowWidth, setWindowWidth] = useState<number>(0);
+  // Initialize with actual window dimensions to avoid SSR hydration mismatch
+  const [windowHeight, setWindowHeight] = useState<number>(() => {
+    if (typeof window !== 'undefined') return window.innerHeight;
+    return 900;
+  });
+  const [windowWidth, setWindowWidth] = useState<number>(() => {
+    if (typeof window !== 'undefined') return window.innerWidth;
+    return 1440;
+  });
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
   const mapRef = useRef<HTMLDivElement | null>(null);
