@@ -376,7 +376,7 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
         className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col flex-shrink-0" 
         style={{ 
           maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined,
-          visibility: modalRef.current?.style.width ? 'visible' : 'hidden'
+          width: `90vw`
         }}>
 
         {/* Header */}
