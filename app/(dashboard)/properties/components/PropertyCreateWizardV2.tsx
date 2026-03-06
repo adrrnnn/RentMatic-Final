@@ -20,6 +20,7 @@ interface PropertyCreateWizardProps {
 }
 
 export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCreateWizardProps) {
+  const modalRef = useRef<HTMLDivElement>(null);
   // Initialize with actual window dimensions to avoid SSR hydration mismatch
   const [windowHeight, setWindowHeight] = useState<number>(() => {
     if (typeof window !== 'undefined') return window.innerHeight;
@@ -42,6 +43,11 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
     const updateDimensions = () => {
       setWindowHeight(window.innerHeight);
       setWindowWidth(window.innerWidth);
+      // Force modal width update
+      if (modalRef.current) {
+        const width = Math.min(window.innerWidth * 0.9, 1200);
+        modalRef.current.style.width = `${width}px`;
+      }
     };
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
@@ -364,14 +370,13 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
   return (
     <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-center overflow-y-auto px-3 py-6">
       <motion.div 
+        ref={modalRef}
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }} 
         className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col flex-shrink-0" 
         style={{ 
           maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined,
-          maxWidth: '90vw',
-          width: '90vw',
-          minWidth: 0
+          visibility: modalRef.current?.style.width ? 'visible' : 'hidden'
         }}>
 
         {/* Header */}
