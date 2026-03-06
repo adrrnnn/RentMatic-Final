@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Plain white background via container; logo mark only -->
+  <circle cx="100" cy="100" r="58" fill="#0B72E7" opacity="0.12"/>
+  <path d="M65 100a35 35 0 1 1 70 0" fill="none" stroke="#0B72E7" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="138" cy="100" r="9" fill="#0B72E7"/>
+</svg>
+
+
+  <circle cx="100" cy="100" r="58" fill="#0B72E7" opacity="0.12"/>
+  <path d="M65 100a35 35 0 1 1 70 0" fill="none" stroke="#0B72E7" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="138" cy="100" r="9" fill="#0B72E7"/>
+</svg>
+

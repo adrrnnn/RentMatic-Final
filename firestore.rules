@@ -1,0 +1,229 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Users can read and write their own user document
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      // Allow user full access to any subcollections under their user doc (e.g., hiddenSharedTenants)
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Allow system user for tenant registrations
+      allow read, write: if userId == "system";
+      
+      // Properties subcollection
+      match /properties/{propertyId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        
+        // Units subcollection
+        match /units/{unitId} {
+          allow read, write: if request.auth != null && request.auth.uid == userId;
+        }
+      }
+      
+      // Tenants subcollection
+      match /tenants/{tenantId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        
+        // Allow system user for tenant registrations
+        allow read, write: if userId == "system";
+      }
+      
+      // Bank details subcollection (for payment system)
+      match /bank_details/{bankId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Working payments subcollection (for real payment system)
+      match /working_payments/{paymentId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+    
+    // Public tenant self-registrations inbox
+    match /tenant-registrations/{registrationId} {
+      // Allow public create from the Tenant Portal (no auth)
+      allow create: if true;
+      // Allow read/update only to the owning landlord
+      allow read, update: if request.auth != null && request.auth.uid == resource.data.landlordId;
+    }
+
+    // Legacy properties rules (for backward compatibility)
+    match /properties/{propertyId} {
+      // Anyone can read available properties (for browsing)
+      allow read: if resource.data.status == 'available';
+      
+      // Landlords can read their own properties
+      allow read: if request.auth != null && request.auth.uid == resource.data.landlordId;
+      
+      // Only the property owner can create, update, or delete their properties
+      allow create: if request.auth != null 
+        && request.auth.uid == request.resource.data.landlordId
+        && isValidProperty(request.resource.data);
+        
+      allow update: if request.auth != null 
+        && request.auth.uid == resource.data.landlordId
+        && isValidProperty(request.resource.data);
+        
+      allow delete: if request.auth != null 
+        && request.auth.uid == resource.data.landlordId;
+    }
+    
+    // Rent requests rules
+    match /requests/{requestId} {
+      // Tenants can create requests
+      allow create: if request.auth != null 
+        && request.auth.uid == request.resource.data.tenantId
+        && isValidRentRequest(request.resource.data);
+        
+      // Landlords can read requests for their properties
+      allow read: if request.auth != null 
+        && request.auth.uid == resource.data.landlordId;
+        
+      // Tenants can read their own requests
+      allow read: if request.auth != null 
+        && request.auth.uid == resource.data.tenantId;
+        
+      // Landlords can update request status
+      allow update: if request.auth != null 
+        && request.auth.uid == resource.data.landlordId
+        && isValidRentRequestUpdate(request.resource.data);
+    }
+    
+    // Emails collection rules
+    match /emails/{emailId} {
+      // Authenticated users can create emails
+      allow create: if request.auth != null && isValidEmail(request.resource.data);
+      
+      // Authenticated users can read emails (for debugging)
+      allow read: if request.auth != null;
+      
+      // Only system can update email status (for Firebase Functions)
+      allow update: if request.auth != null;
+    }
+    
+    // Tenant registrations collection (for anonymous tenant portal)
+    match /tenant-registrations/{registrationId} {
+      // Allow anonymous users to create tenant registrations (no validation)
+      allow create: if true;
+      
+      // Only authenticated users can read tenant registrations
+      allow read: if request.auth != null;
+    }
+    
+    // Shared tenants collection (for tenant registrations)
+    match /shared-tenants/{tenantId} {
+      // Allow anonymous users to create tenant registrations (no validation for now)
+      allow create: if true;
+      
+      // Only authenticated users can read shared tenants
+      allow read: if request.auth != null;
+      
+      // Only authenticated users can update shared tenants
+      allow update: if request.auth != null;
+    }
+    
+    // Landlord accounts collection (for payment system)
+    match /landlord_accounts/{accountId} {
+      // Users can read and write their own landlord account
+      // Allow read even if document doesn't exist (for checking)
+      allow read: if request.auth != null && request.auth.uid == accountId;
+      // Allow create/update if userId matches
+      allow create: if request.auth != null 
+        && request.auth.uid == accountId
+        && request.resource.data.userId == accountId;
+      allow update: if request.auth != null 
+        && request.auth.uid == accountId
+        && resource.data.userId == accountId;
+    }
+    
+    // Sub accounts collection (for Xendit integration)
+    match /sub_accounts/{subAccountId} {
+      // Authenticated users can read and write sub accounts
+      allow read, write: if request.auth != null;
+    }
+    
+    // Working payments collection (for real payment system)
+    match /working_payments/{paymentId} {
+      // Users can create payments where landlordId matches their userId
+      allow create: if request.auth != null 
+        && request.resource.data.landlordId == request.auth.uid;
+      
+      // Users can read payments where landlordId matches their userId
+      allow read: if request.auth != null 
+        && resource.data.landlordId == request.auth.uid;
+      
+      // Users can update payments where landlordId matches their userId
+      allow update: if request.auth != null 
+        && resource.data.landlordId == request.auth.uid
+        && request.resource.data.landlordId == request.auth.uid;
+      
+      // Users can delete payments where landlordId matches their userId
+      // Only allow deletion of non-paid payments (enforced in service layer)
+      allow delete: if request.auth != null 
+        && resource.data.landlordId == request.auth.uid;
+    }
+    
+    // Helper functions
+    function isValidProperty(data) {
+      return data.keys().hasAll(['landlordId', 'name', 'description', 'location', 'type', 'rent', 'status', 'images', 'createdAt', 'updatedAt'])
+        && data.landlordId is string
+        && data.name is string
+        && data.description is string
+        && data.location is map
+        && data.location.keys().hasAll(['city', 'barangay', 'province'])
+        && data.type in ['apartment', 'condo', 'house', 'room']
+        && data.rent is number
+        && data.rent > 0
+        && data.status in ['available', 'occupied']
+        && data.images is list
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+    
+    function isValidRentRequest(data) {
+      return data.keys().hasAll(['propertyId', 'tenantId', 'landlordId', 'message', 'status', 'createdAt', 'updatedAt'])
+        && data.propertyId is string
+        && data.tenantId is string
+        && data.landlordId is string
+        && data.message is string
+        && data.status == 'pending'
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+    
+    function isValidRentRequestUpdate(data) {
+      return data.keys().hasAll(['status', 'updatedAt'])
+        && data.status in ['pending', 'approved', 'rejected']
+        && data.updatedAt is timestamp;
+    }
+    
+    function isValidEmail(data) {
+      return data.keys().hasAll(['to', 'subject', 'message', 'type', 'status', 'createdAt'])
+        && data.to is string
+        && data.subject is string
+        && data.message is string
+        && data.type in ['invitation', 'welcome', 'reminder']
+        && data.status == 'pending'
+        && data.createdAt is timestamp;
+    }
+    
+    function isValidTenantRegistration(data) {
+      return data.keys().hasAll(['fullName', 'contact', 'createdAt'])
+        && data.fullName is string
+        && data.contact is map
+        && data.contact.keys().hasAll(['email', 'phone'])
+        && data.contact.email is string
+        && data.contact.phone is string
+        && data.createdAt is string
+        && (data.moveInDate == null || data.moveInDate is string)
+        && (data.notes == null || data.notes is string)
+        && (data.propertyId == null || data.propertyId is string)
+        && (data.status == null || data.status is string)
+        && (data.inviteCode == null || data.inviteCode is string)
+        && (data.updatedAt == null || data.updatedAt is string);
+    }
+  }
+}

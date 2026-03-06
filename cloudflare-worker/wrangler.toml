@@ -1,0 +1,16 @@
+name = "rentmatic-xendit-api"
+main = "src/index.ts"
+compatibility_date = "2024-10-01"
+
+[env.production]
+routes = [{ pattern = "xendit.rentmatic-b24ff.web.app", zone_name = "" }]
+
+
+
+
+
+
+
+
+
+
