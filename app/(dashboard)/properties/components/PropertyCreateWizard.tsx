@@ -174,8 +174,8 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
 
   if (!isOpen) return null;
 
-  const modalMaxHeight = windowHeight ? Math.max(480, Math.min(windowHeight - 48, 960)) : undefined;
-  const contentMaxHeight = modalMaxHeight ? Math.max(300, modalMaxHeight - 200) : undefined;
+  const modalMaxHeight = windowHeight ? Math.min(windowHeight - 32, 960) : undefined;
+  const contentMaxHeight = modalMaxHeight ? Math.max(0, modalMaxHeight - 200) : undefined;
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-start sm:justify-center overflow-y-auto px-3 py-6" style={{ minHeight: windowHeight || undefined }}>
