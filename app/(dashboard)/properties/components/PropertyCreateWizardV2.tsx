@@ -20,6 +20,7 @@ interface PropertyCreateWizardProps {
 }
 
 export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCreateWizardProps) {
+  const [windowHeight, setWindowHeight] = useState<number>(0);
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -27,6 +28,14 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
   const markerRef = useRef<maplibregl.Marker | null>(null);
   const [locating, setLocating] = useState(false);
   const [accuracyMeters, setAccuracyMeters] = useState<number | null>(null);
+
+  // Track window height for responsive modal sizing
+  useEffect(() => {
+    const updateHeight = () => setWindowHeight(window.innerHeight);
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
 
   // Form state
   const [form, setForm] = useState<CreatePropertyData>(() => ({
@@ -338,11 +347,14 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
 
   if (!isOpen) return null;
 
+  const modalMaxHeight = windowHeight ? Math.min(windowHeight - 32, 960) : undefined;
+  const contentMaxHeight = modalMaxHeight ? Math.max(0, modalMaxHeight - 200) : undefined;
+
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden">
+    <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-center overflow-y-auto px-3 py-6" style={{ minHeight: windowHeight || undefined }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white w-full max-w-[min(95vw,980px)] rounded-2xl shadow-2xl overflow-hidden flex flex-col" style={{ maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined }}>
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100">
+        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 flex-shrink-0 sticky top-0 z-10 bg-white">
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Create Property</h2>
             <p className="text-sm text-gray-500 mt-0.5">Fill in the details below</p>
@@ -353,7 +365,7 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
         </div>
 
         {/* Numbered circles + green progress bar */}
-        <div className="px-8 py-6 bg-gray-50/50">
+        <div className="px-8 py-6 bg-gray-50/50 flex-shrink-0 sticky top-[88px] z-10">
           <div className="flex items-center justify-between mb-4">
             {[1, 2, 3, 4, 5].map((s, idx) => (
               <div key={s} className="flex items-center flex-1">
@@ -384,7 +396,7 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
         </div>
 
         {/* Content */}
-        <div className="px-8 py-8 min-h-[500px]">
+        <div className="p-8 space-y-6 overflow-y-auto flex-1 min-h-0" style={{ maxHeight: contentMaxHeight ? `${contentMaxHeight}px` : undefined }}>
           {step === 1 && (
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
               <div className="lg:col-span-2 space-y-5">
@@ -715,7 +727,7 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-8 py-6 border-t border-gray-100 bg-gray-50/50">
+        <div className="flex items-center justify-between px-8 py-6 border-t border-gray-100 bg-gray-50/50 flex-shrink-0 sticky bottom-0 z-10">
           <Button variant="outline" onClick={closeAndReset} className="px-6">
             Cancel
           </Button>
