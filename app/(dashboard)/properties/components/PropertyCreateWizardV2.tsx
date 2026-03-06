@@ -366,27 +366,28 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
       <motion.div 
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }} 
-        className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col" 
+        className="bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col flex-shrink-0" 
         style={{ 
           maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined,
           maxWidth: '90vw',
-          width: '90vw'
+          width: '90vw',
+          minWidth: 0
         }}>
 
         {/* Header */}
-        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 flex-shrink-0 sticky top-0 z-10 bg-white">
-          <div>
+        <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 flex-shrink-0 sticky top-0 z-10 bg-white min-w-0">
+          <div className="min-w-0">
             <h2 className="text-2xl font-bold text-gray-900">Create Property</h2>
             <p className="text-sm text-gray-500 mt-0.5">Fill in the details below</p>
           </div>
-          <button onClick={closeAndReset} className="text-gray-400 hover:text-gray-600 transition-colors">
+          <button onClick={closeAndReset} className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
             <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Numbered circles + green progress bar */}
-        <div className="px-8 py-6 bg-gray-50/50 flex-shrink-0">
-          <div className="flex items-center justify-between mb-4">
+        <div className="px-8 py-6 bg-gray-50/50 flex-shrink-0 min-w-0">
+          <div className="flex items-center justify-between mb-4 min-w-0">
             {[1, 2, 3, 4, 5].map((s, idx) => (
               <div key={s} className="flex items-center flex-1">
                 <motion.div
@@ -416,10 +417,10 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
         </div>
 
         {/* Content */}
-        <div className="p-8 space-y-6 overflow-y-auto" style={{ maxHeight: contentMaxHeight ? `${contentMaxHeight}px` : undefined, flex: '1 1 0' }}>
+        <div className="p-8 space-y-6 overflow-y-auto min-w-0" style={{ maxHeight: contentMaxHeight ? `${contentMaxHeight}px` : undefined, flex: '1 1 0' }}>
           {step === 1 && (
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-              <div className="lg:col-span-2 space-y-5">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 min-w-0">
+              <div className="lg:col-span-2 space-y-5 min-w-0">
                 <div className="space-y-2">
                   <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
                     <Building2 className="w-4 h-4 text-green-600" />
@@ -506,7 +507,7 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
                   </div>
                 </div>
               </div>
-              <div className="lg:col-span-3 h-[520px] rounded-2xl border-2 border-gray-200 overflow-hidden relative shadow-lg">
+              <div className="lg:col-span-3 h-[520px] rounded-2xl border-2 border-gray-200 overflow-hidden relative shadow-lg min-w-0">
                 <div ref={mapRef} className="w-full h-full" />
                 <div className="absolute bottom-4 left-4 bg-white px-3 py-2 rounded-lg text-xs shadow-lg flex items-center gap-2 border border-gray-200">
                   <MapPin className="w-4 h-4 text-green-600" />
@@ -532,7 +533,7 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
           )}
 
           {step === 2 && (
-            <div className="max-w-2xl mx-auto space-y-6">
+            <div className="max-w-2xl mx-auto space-y-6 min-w-0">
               <div className="bg-gradient-to-br from-green-50 to-white p-6 rounded-2xl border border-green-100 shadow-sm">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0 shadow-sm">
@@ -584,7 +585,7 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
           )}
 
           {step === 3 && (
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto min-w-0">
               <div className="bg-gradient-to-br from-purple-50 to-white p-6 rounded-2xl border border-purple-100 shadow-sm">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0 shadow-sm">
@@ -619,7 +620,7 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
           )}
 
           {step === 4 && (
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto min-w-0">
               <div className="bg-gradient-to-br from-orange-50 to-white p-6 rounded-2xl border border-orange-100 shadow-sm">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center flex-shrink-0 shadow-sm">
@@ -719,7 +720,7 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
           )}
 
           {step === 5 && (
-            <div className="max-w-2xl mx-auto">
+            <div className="max-w-2xl mx-auto min-w-0">
               <div className="bg-gradient-to-br from-indigo-50 to-white p-6 rounded-2xl border border-indigo-100 shadow-sm">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center flex-shrink-0 shadow-sm">
