@@ -167,8 +167,8 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white w-full max-w-[min(95vw,960px)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100vh-3rem)]">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
           <div>
@@ -191,7 +191,7 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-8 overflow-y-auto flex-1">
+        <div className="p-6 space-y-8 overflow-y-auto flex-1 min-h-0">
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div key="step1" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -222,7 +222,7 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
                     <input placeholder="ZIP (optional)" className="border rounded-lg px-3 py-2" value={form.addressPH?.zip || ""} onChange={(e) => setForm({ ...form, addressPH: { ...form.addressPH, zip: e.target.value } })} />
                   </div>
                 </div>
-                <div className="h-64 rounded-xl border overflow-hidden relative">
+                <div className="w-full h-64 sm:h-72 lg:h-80 rounded-xl border overflow-hidden relative">
                   {!mapsReady && (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-500">Loading map...</div>
                   )}
