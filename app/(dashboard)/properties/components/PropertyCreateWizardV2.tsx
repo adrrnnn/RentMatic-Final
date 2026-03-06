@@ -365,7 +365,7 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
         </div>
 
         {/* Numbered circles + green progress bar */}
-        <div className="px-8 py-6 bg-gray-50/50 flex-shrink-0 sticky top-[88px] z-10">
+        <div className="px-8 py-6 bg-gray-50/50 flex-shrink-0">
           <div className="flex items-center justify-between mb-4">
             {[1, 2, 3, 4, 5].map((s, idx) => (
               <div key={s} className="flex items-center flex-1">
@@ -396,7 +396,7 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
         </div>
 
         {/* Content */}
-        <div className="p-8 space-y-6 overflow-y-auto flex-1 min-h-0" style={{ maxHeight: contentMaxHeight ? `${contentMaxHeight}px` : undefined }}>
+        <div className="p-8 space-y-6 overflow-y-auto" style={{ maxHeight: contentMaxHeight ? `${contentMaxHeight}px` : undefined, flex: '1 1 0' }}>
           {step === 1 && (
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
               <div className="lg:col-span-2 space-y-5">
