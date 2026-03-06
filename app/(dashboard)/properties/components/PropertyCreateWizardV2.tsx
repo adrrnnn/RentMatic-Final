@@ -64,10 +64,28 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
   useLayoutEffect(() => {
     if (isOpen && modalRef.current) {
       const width = Math.min(window.innerWidth * 0.9, 1200);
+      const parent = modalRef.current.parentElement;
+      
       modalRef.current.style.width = `${width}px`;
       modalRef.current.style.maxWidth = `${width}px`;
       modalRef.current.style.minWidth = `${width}px`;
-      console.log('useLayoutEffect: Set modal to', width, 'px');
+      
+      const computedStyle = window.getComputedStyle(modalRef.current);
+      const parentComputedStyle = parent ? window.getComputedStyle(parent) : null;
+      
+      console.log('=== useLayoutEffect Debug ===');
+      console.log('Set modal to:', width, 'px');
+      console.log('Inline style width:', modalRef.current.style.width);
+      console.log('Computed width:', computedStyle.width);
+      console.log('Computed padding:', computedStyle.padding);
+      console.log('Computed border:', computedStyle.border);
+      console.log('Actual clientWidth:', modalRef.current.clientWidth);
+      console.log('Actual offsetWidth:', modalRef.current.offsetWidth);
+      console.log('Parent element:', parent);
+      console.log('Parent computed width:', parentComputedStyle?.width);
+      console.log('Parent computed display:', parentComputedStyle?.display);
+      console.log('Parent computed flex:', parentComputedStyle?.flex);
+      console.log('Full element HTML:', modalRef.current.outerHTML.substring(0, 500));
     }
   }, [isOpen]);
 
