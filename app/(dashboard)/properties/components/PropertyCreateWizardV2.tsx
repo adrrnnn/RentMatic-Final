@@ -21,6 +21,7 @@ interface PropertyCreateWizardProps {
 
 export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCreateWizardProps) {
   const [windowHeight, setWindowHeight] = useState<number>(0);
+  const [windowWidth, setWindowWidth] = useState<number>(0);
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -29,12 +30,15 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
   const [locating, setLocating] = useState(false);
   const [accuracyMeters, setAccuracyMeters] = useState<number | null>(null);
 
-  // Track window height for responsive modal sizing
+  // Track window dimensions for responsive modal sizing
   useEffect(() => {
-    const updateHeight = () => setWindowHeight(window.innerHeight);
-    updateHeight();
-    window.addEventListener("resize", updateHeight);
-    return () => window.removeEventListener("resize", updateHeight);
+    const updateDimensions = () => {
+      setWindowHeight(window.innerHeight);
+      setWindowWidth(window.innerWidth);
+    };
+    updateDimensions();
+    window.addEventListener("resize", updateDimensions);
+    return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
   // Form state
@@ -347,12 +351,27 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
 
   if (!isOpen) return null;
 
-  const modalMaxHeight = windowHeight ? Math.min(windowHeight - 48, 1400) : undefined;
+  const getModalMaxWidth = () => {
+    if (!windowWidth) return '900px';
+    // Mobile first: < 768px
+    if (windowWidth < 768) return `${Math.max(320, windowWidth - 32)}px`;
+    // Tablet: 768-1024px
+    if (windowWidth < 1024) return `${Math.max(600, windowWidth * 0.9)}px`;
+    // Small Desktop: 1024-1440px
+    if (windowWidth < 1440) return '800px';
+    // Large Desktop: 1440-1920px
+    if (windowWidth < 1920) return '900px';
+    // Ultra-wide: 1920px+
+    return '1000px';
+  };
+
+  const modalMaxHeight = windowHeight ? Math.min(windowHeight - 48, 850) : undefined;
   const contentMaxHeight = modalMaxHeight ? Math.max(0, modalMaxHeight - 240) : undefined;
+  const modalMaxWidth = getModalMaxWidth();
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-center overflow-y-auto px-3 py-6" style={{ minHeight: windowHeight || undefined }}>
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white w-full max-w-[min(95vw,1300px)] rounded-2xl shadow-2xl overflow-hidden flex flex-col" style={{ maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white w-full rounded-2xl shadow-2xl overflow-hidden flex flex-col" style={{ maxWidth: modalMaxWidth, maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined }}>
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 flex-shrink-0 sticky top-0 z-10 bg-white">
           <div>
