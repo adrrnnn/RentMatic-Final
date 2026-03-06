@@ -347,12 +347,12 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
 
   if (!isOpen) return null;
 
-  const modalMaxHeight = windowHeight ? Math.min(windowHeight - 32, 960) : undefined;
-  const contentMaxHeight = modalMaxHeight ? Math.max(0, modalMaxHeight - 200) : undefined;
+  const modalMaxHeight = windowHeight ? Math.min(windowHeight - 48, 1400) : undefined;
+  const contentMaxHeight = modalMaxHeight ? Math.max(0, modalMaxHeight - 240) : undefined;
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-center overflow-y-auto px-3 py-6" style={{ minHeight: windowHeight || undefined }}>
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white w-full max-w-[min(95vw,980px)] rounded-2xl shadow-2xl overflow-hidden flex flex-col" style={{ maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined }}>
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white w-full max-w-[min(95vw,1300px)] rounded-2xl shadow-2xl overflow-hidden flex flex-col" style={{ maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined }}>
         {/* Header */}
         <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 flex-shrink-0 sticky top-0 z-10 bg-white">
           <div>
