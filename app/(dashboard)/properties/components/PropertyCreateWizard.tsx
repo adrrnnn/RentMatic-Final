@@ -168,9 +168,9 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden">
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b">
+        <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
           <div>
             <h2 className="text-xl font-semibold">Create Property</h2>
             <p className="text-sm text-gray-500">Step {step} of 5</p>
@@ -178,7 +178,7 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
           <Button variant="ghost" onClick={closeAndReset} className="text-gray-500 hover:text-gray-700"><X className="w-5 h-5" /></Button>
         </div>
         {/* Green animated progress bar */}
-        <div className="px-6 pt-4 pb-2">
+        <div className="px-6 pt-4 pb-2 flex-shrink-0">
           <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
             <motion.div
               initial={{ width: 0 }}
@@ -191,7 +191,7 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-8">
+        <div className="p-6 space-y-8 overflow-y-auto flex-1">
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div key="step1" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -222,7 +222,7 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
                     <input placeholder="ZIP (optional)" className="border rounded-lg px-3 py-2" value={form.addressPH?.zip || ""} onChange={(e) => setForm({ ...form, addressPH: { ...form.addressPH, zip: e.target.value } })} />
                   </div>
                 </div>
-                <div className="h-96 rounded-xl border overflow-hidden relative">
+                <div className="h-64 rounded-xl border overflow-hidden relative">
                   {!mapsReady && (
                     <div className="absolute inset-0 flex items-center justify-center text-gray-500">Loading map...</div>
                   )}
@@ -365,7 +365,7 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t bg-gray-50">
+        <div className="flex items-center justify-between p-6 border-t bg-gray-50 flex-shrink-0">
           <Button variant="outline" onClick={closeAndReset}>
             Cancel
           </Button>
