@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { X, MapPin, ChevronLeft, ChevronRight, Building2, FileText, Home, User, Tag } from "lucide-react";
 import { Button } from "@/components/Button";
@@ -41,18 +41,35 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
   // Track window dimensions for responsive modal sizing
   useEffect(() => {
     const updateDimensions = () => {
-      setWindowHeight(window.innerHeight);
-      setWindowWidth(window.innerWidth);
+      const newHeight = window.innerHeight;
+      const newWidth = window.innerWidth;
+      setWindowHeight(newHeight);
+      setWindowWidth(newWidth);
+      
       // Force modal width update
       if (modalRef.current) {
-        const width = Math.min(window.innerWidth * 0.9, 1200);
+        const width = Math.min(newWidth * 0.9, 1200);
         modalRef.current.style.width = `${width}px`;
+        console.log('Updated modal width to:', width, 'px from window width:', newWidth);
+        console.log('Modal element:', modalRef.current);
+        console.log('Computed style width:', window.getComputedStyle(modalRef.current).width);
       }
     };
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
+
+  // Force width after Framer Motion render
+  useLayoutEffect(() => {
+    if (isOpen && modalRef.current) {
+      const width = Math.min(window.innerWidth * 0.9, 1200);
+      modalRef.current.style.width = `${width}px`;
+      modalRef.current.style.maxWidth = `${width}px`;
+      modalRef.current.style.minWidth = `${width}px`;
+      console.log('useLayoutEffect: Set modal to', width, 'px');
+    }
+  }, [isOpen]);
 
   // Form state
   const [form, setForm] = useState<CreatePropertyData>(() => ({
