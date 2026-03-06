@@ -18,6 +18,7 @@ interface PropertyCreateWizardProps {
 }
 
 export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCreateWizardProps) {
+  const [windowHeight, setWindowHeight] = useState<number>(0);
   const [step, setStep] = useState<Step>(1);
   const [submitting, setSubmitting] = useState(false);
   const [mapsReady, setMapsReady] = useState(false);
@@ -59,6 +60,13 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
     // MapLibre requires no async loader; mark ready when modal opens
     setMapsReady(true);
   }, [isOpen]);
+
+  useEffect(() => {
+    const updateHeight = () => setWindowHeight(window.innerHeight);
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
 
   // Initialize map when step 1 and mapsReady
   useEffect(() => {
@@ -166,9 +174,17 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
 
   if (!isOpen) return null;
 
+  const modalMaxHeight = windowHeight ? Math.max(480, Math.min(windowHeight - 48, 960)) : undefined;
+  const contentMaxHeight = modalMaxHeight ? Math.max(300, modalMaxHeight - 200) : undefined;
+
   return (
-    <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-center overflow-y-auto px-3 py-6">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-white w-full max-w-[min(95vw,980px)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[calc(100vh-3rem)]">
+    <div className="fixed inset-0 z-[9999] bg-black/40 backdrop-blur-sm flex items-start sm:items-center justify-center overflow-y-auto px-3 py-6" style={{ minHeight: windowHeight || undefined }}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white w-full max-w-[min(95vw,980px)] rounded-2xl shadow-2xl overflow-hidden flex flex-col"
+        style={{ maxHeight: modalMaxHeight ? `${modalMaxHeight}px` : undefined }}
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b flex-shrink-0">
           <div>
@@ -191,7 +207,10 @@ export function PropertyCreateWizard({ isOpen, onClose, onCreate }: PropertyCrea
         </div>
 
         {/* Content */}
-        <div className="p-6 space-y-8 overflow-y-auto flex-1 min-h-0" style={{ maxHeight: 'calc(100vh - 220px)' }}>
+        <div
+          className="p-6 space-y-8 overflow-y-auto flex-1 min-h-0"
+          style={{ maxHeight: contentMaxHeight ? `${contentMaxHeight}px` : undefined }}
+        >
           <AnimatePresence mode="wait">
             {step === 1 && (
               <motion.div key="step1" initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
