@@ -359,18 +359,22 @@ export function PropertyCreateWizardV2({ isOpen, onClose, onCreate }: PropertyCr
   if (!isOpen) return null;
 
   const getModalMaxWidth = () => {
-    if (!windowWidth) return '900px';
+    if (!windowWidth) return '90vw';
     // Mobile first: < 768px
-    if (windowWidth < 768) return `${Math.max(320, windowWidth - 32)}px`;
+    if (windowWidth < 768) return `calc(100vw - 32px)`;
     // Tablet: 768-1024px
-    if (windowWidth < 1024) return `${Math.max(600, windowWidth * 0.9)}px`;
+    if (windowWidth < 1024) return `90vw`;
     // Small Desktop: 1024-1440px
-    if (windowWidth < 1440) return '800px';
+    if (windowWidth < 1440) return `min(85vw, 900px)`;
     // Large Desktop: 1440-1920px
-    if (windowWidth < 1920) return '900px';
+    if (windowWidth < 1920) return `min(80vw, 1000px)`;
     // Ultra-wide: 1920px+
-    return '1000px';
+    return `min(75vw, 1200px)`;
   };
+
+  useEffect(() => {
+    console.log('Modal dimensions:', { windowWidth, windowHeight, modalMaxWidth: getModalMaxWidth() });
+  }, [windowWidth, windowHeight]);
 
   const modalMaxHeight = windowHeight ? Math.min(windowHeight - 48, 850) : undefined;
   const contentMaxHeight = modalMaxHeight ? Math.max(0, modalMaxHeight - 240) : undefined;
